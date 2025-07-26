@@ -1,0 +1,376 @@
+<div class="container-fluid mt-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2><i class="bi bi-speedometer2"></i> Dashboard de Administración</h2>
+          <p class="text-muted">Gestión completa de empleados</p>
+        </div>
+        <button 
+          class="btn btn-primary btn-lg"
+          (click)="showCreateForm = true"
+          [disabled]="isLoading">
+          <i class="bi bi-person-plus"></i>
+          Nuevo Empleado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div class="row mb-3" *ngIf="alertMessage">
+    <div class="col-12">
+      <div class="alert alert-dismissible fade show"
+           [ngClass]="alertType === 'success' ? 'alert-success' : 'alert-danger'">
+        <i [class]="alertType === 'success' ? 'bi bi-check-circle-fill' : 'bi bi-exclamation-triangle-fill'"></i>
+        {{ alertMessage }}
+        <button type="button" class="btn-close" (click)="clearAlert()"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="row mb-4" *ngIf="estadisticas">
+    <div class="col-md-4">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Total Empleados</h6>
+              <h2 class="mb-0">{{ estadisticas.totalEmpleados }}</h2>
+            </div>
+            <i class="bi bi-people display-4 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Administradores</h6>
+              <h2 class="mb-0">{{ estadisticas.totalAdmins }}</h2>
+            </div>
+            <i class="bi bi-shield-check display-4 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="card-title">Empleados Regulares</h6>
+              <h2 class="mb-0">{{ estadisticas.totalEmpleadosRegulares }}</h2>
+            </div>
+            <i class="bi bi-person-badge display-4 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de creación/edición -->
+  <div class="row mb-4" *ngIf="showCreateForm || editingEmpleado">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-person-gear"></i>
+            {{ editingEmpleado ? 'Editar Empleado' : 'Crear Nuevo Empleado' }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="submitForm()" #empleadoForm="ngForm">
+            <div class="row">
+              <!-- Nombre -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-person"></i> Nombre Completo *
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control"
+                  [(ngModel)]="formData.nombre"
+                  name="nombre"
+                  required
+                  placeholder="Ej: Juan Pérez">
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-envelope"></i> Email *
+                </label>
+                <input 
+                  type="email" 
+                  class="form-control"
+                  [(ngModel)]="formData.email"
+                  name="email"
+                  required
+                  placeholder="juan@empresa.com">
+              </div>
+
+              <!-- Password (solo al crear) -->
+              <div class="col-md-6 mb-3" *ngIf="!editingEmpleado">
+                <label class="form-label">
+                  <i class="bi bi-lock"></i> Contraseña *
+                </label>
+                <input 
+                  type="password" 
+                  class="form-control"
+                  [(ngModel)]="formData.password"
+                  name="password"
+                  [required]="!editingEmpleado"
+                  placeholder="Contraseña inicial">
+              </div>
+
+              <!-- Cargo -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-briefcase"></i> Cargo *
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control"
+                  [(ngModel)]="formData.cargo"
+                  name="cargo"
+                  required
+                  placeholder="Ej: Desarrollador Senior">
+              </div>
+
+              <!-- Departamento -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-building"></i> Departamento *
+                </label>
+                <select 
+                  class="form-select"
+                  [(ngModel)]="formData.departamento"
+                  name="departamento"
+                  required>
+                  <option value="">Seleccionar departamento</option>
+                  <option value="Administración">Administración</option>
+                  <option value="Tecnología">Tecnología</option>
+                  <option value="Recursos Humanos">Recursos Humanos</option>
+                  <option value="Finanzas">Finanzas</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Ventas">Ventas</option>
+                  <option value="Operaciones">Operaciones</option>
+                </select>
+              </div>
+
+              <!-- Salario -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-currency-dollar"></i> Salario *
+                </label>
+                <input 
+                  type="number" 
+                  class="form-control"
+                  [(ngModel)]="formData.salario"
+                  name="salario"
+                  required
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00">
+              </div>
+
+              <!-- Fecha de Ingreso -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-calendar"></i> Fecha de Ingreso *
+                </label>
+                <input 
+                  type="date" 
+                  class="form-control"
+                  [(ngModel)]="formData.fechaIngreso"
+                  name="fechaIngreso"
+                  required>
+              </div>
+
+              <!-- Teléfono -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-phone"></i> Teléfono
+                </label>
+                <input 
+                  type="tel" 
+                  class="form-control"
+                  [(ngModel)]="formData.telefono"
+                  name="telefono"
+                  placeholder="0987654321">
+              </div>
+
+              <!-- Rol -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  <i class="bi bi-shield"></i> Rol *
+                </label>
+                <select 
+                  class="form-select"
+                  [(ngModel)]="formData.rol"
+                  name="rol"
+                  required>
+                  <option value="">Seleccionar rol</option>
+                  <option value="ADMIN">Administrador</option>
+                  <option value="EMPLEADO">Empleado</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end gap-2">
+              <button 
+                type="button" 
+                class="btn btn-secondary"
+                (click)="cancelForm()">
+                <i class="bi bi-x-circle"></i>
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="empleadoForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" [class]="editingEmpleado ? 'bi bi-check-circle' : 'bi bi-person-plus'"></i>
+                {{ editingEmpleado ? 'Actualizar' : 'Crear' }} Empleado
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros y búsqueda -->
+  <div class="row mb-3" *ngIf="!showCreateForm && !editingEmpleado">
+    <div class="col-md-4">
+      <input 
+        type="text" 
+        class="form-control"
+        [(ngModel)]="searchTerm"
+        (input)="filterEmpleados()"
+        placeholder="🔍 Buscar por nombre o email...">
+    </div>
+    <div class="col-md-3">
+      <select 
+        class="form-select"
+        [(ngModel)]="departamentoFilter"
+        (change)="filterEmpleados()">
+        <option value="">Todos los departamentos</option>
+        <option *ngFor="let dept of departamentos" [value]="dept">{{ dept }}</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select 
+        class="form-select"
+        [(ngModel)]="rolFilter"
+        (change)="filterEmpleados()">
+        <option value="">Todos los roles</option>
+        <option value="ADMIN">Administradores</option>
+        <option value="EMPLEADO">Empleados</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button 
+        class="btn btn-outline-secondary w-100"
+        (click)="clearFilters()">
+        <i class="bi bi-x-circle"></i> Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla de empleados -->
+  <div class="row" *ngIf="!showCreateForm && !editingEmpleado">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-table"></i>
+            Lista de Empleados ({{ empleadosFiltrados.length }})
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Cargo</th>
+                  <th>Departamento</th>
+                  <th>Salario</th>
+                  <th>Rol</th>
+                  <th>Fecha Ingreso</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="isLoading">
+                  <td colspan="8" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2 mb-0 text-muted">Cargando empleados...</p>
+                  </td>
+                </tr>
+                <tr *ngFor="let empleado of empleadosFiltrados; trackBy: trackByEmpleado">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-person-circle text-muted me-2"></i>
+                      <strong>{{ empleado.nombre }}</strong>
+                    </div>
+                  </td>
+                  <td>{{ empleado.email }}</td>
+                  <td>{{ empleado.cargo }}</td>
+                  <td>{{ empleado.departamento }}</td>
+                  <td>
+                    <strong class="text-success">
+                      ${{ empleado.salario | number:'1.2-2' }}
+                    </strong>
+                  </td>
+                  <td>
+                    <span class="badge" 
+                          [ngClass]="empleado.rol === 'ADMIN' ? 'badge-admin' : 'badge-empleado'">
+                      {{ empleado.rol }}
+                    </span>
+                  </td>
+                  <td>{{ empleado.fechaIngreso | date:'shortDate' }}</td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button 
+                        class="btn btn-outline-primary"
+                        (click)="editEmpleado(empleado)"
+                        title="Editar">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button 
+                        class="btn btn-outline-danger"
+                        (click)="deleteEmpleado(empleado)"
+                        title="Eliminar"
+                        [disabled]="empleado.id === currentUserId">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="!isLoading && empleadosFiltrados.length === 0">
+                  <td colspan="8" class="text-center py-4">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="mt-2 mb-0 text-muted">
+                      {{ empleados.length === 0 ? 'No hay empleados registrados' : 'No se encontraron empleados con los filtros aplicados' }}
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
