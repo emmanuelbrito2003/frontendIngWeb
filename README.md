@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # frontendIngWeb
 Frontend ingenieria web examen
 =======
