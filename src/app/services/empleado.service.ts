@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import {
   Empleado,
   EmpleadoCreate,
@@ -14,7 +15,7 @@ import { EmpleadoEstadisticas } from '../models/api.interface';
   providedIn: 'root',
 })
 export class EmpleadoService {
-  private readonly API_URL = 'http://localhost:8080/api/empleados';
+  private readonly API_URL = `${environment.apiUrl}/empleados`;
 
   constructor(private http: HttpClient) {}
 
