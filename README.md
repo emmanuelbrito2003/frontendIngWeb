@@ -155,73 +155,16 @@ ng serve --host 0.0.0.0 --port 4200
 # Build de desarrollo
 ng build
 
-# Build de producción
-ng build --configuration production
-```
 
-### Generación de Código
-
-```bash
-# Generar componente
-ng generate component nombre-componente
-
-# Generar servicio
-ng generate service nombre-servicio
-
-# Generar guard
-ng generate guard nombre-guard
-
-# Generar interceptor
-ng generate interceptor nombre-interceptor
-```
 
 ### Testing
 
 ```bash
-# Ejecutar tests en modo watch
+# Ejecutar tests 
 ng test
 
 # Ejecutar tests con coverage
 ng test --code-coverage
 
-# Ejecutar tests e2e
-ng e2e
 ```
 
-## 📊 Características Técnicas
-
-### Performance
-- ⚡ **Lazy loading** de módulos
-- 🎯 **Tree shaking** automático
-- 📦 **Bundle optimization**
-- 🚀 **AOT compilation**
-
-### Desarrollo
-- 🔍 **Hot reload** automático
-- 🐛 **Source maps** para debugging
-- 📝 **TypeScript** para type safety
-- 🎨 **ESLint** para calidad de código
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📝 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 📞 Soporte
-
-Si tienes alguna pregunta o problema:
-
-- 📧 **Email**: soporte@empresa.com
-- 🐛 **Issues**: [GitHub Issues](https://github.com/tu-usuario/empleados-frontend/issues)
-- 📚 **Documentación**: [Wiki del proyecto](https://github.com/tu-usuario/empleados-frontend/wiki)
-
----
-
-**Desarrollado con ❤️ usando Angular 19**
